@@ -56,3 +56,5 @@ sub generateNewPin {
 		}		
 	}
 }
+
+1;
