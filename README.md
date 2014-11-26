@@ -1,4 +1,1 @@
-plugins-openkore
-================
-
-Plugins para o Openkore desenvolvidos por mim. 
+Diversos plugins para o Openkore.
