@@ -102,7 +102,7 @@ sub parseMacroFile {
 				} else {
 					undef %block
 				}
-			} elsif ($_ eq "call {") {
+			} elsif ($_ eq "call\s*{") {
 				$block{loadmacro} = 1;
 				$block{loadmacro_name} = "tempMacro".$tempmacro++;
 				$automacro{$block{name}}->{call} = $block{loadmacro_name};
