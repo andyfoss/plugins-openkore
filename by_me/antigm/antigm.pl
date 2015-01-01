@@ -83,7 +83,7 @@ sub handleSystemChat {
 
 sub handlePublicChat {
 	my $message = $_[1]->{message};
-	if ($message =~ /^(\[GM\]|\[GE\])/) {
+	if ($message =~ /^(\[GM\]|\[GE\]|\[LU\])/) {
 		warning "[AntiGM] Situação suspeita encontrada.\n";
 		GMfound('O GM disse alguma coisa no chat publico');
 	}
@@ -91,7 +91,7 @@ sub handlePublicChat {
 
 sub handlePrivateMessage {
 	my $nick = $_[1]->{privMsgUser};
-	if ($nick =~ /^(\[GM\]|\[GE\])/) {
+	if ($nick =~ /^(\[GM\]|\[GE\]|\[LU\])/) {
 		warning "[AntiGM] Situação suspeita encontrada.\n";
 		GMfound('O GM me mandou uma PM');
 	}
