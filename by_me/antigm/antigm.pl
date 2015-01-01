@@ -102,12 +102,12 @@ sub handleBusMessage {
 	if ($msg->{messageID} eq 'antigm' && $msg->{args}{server} eq $servers[$config{server}]{name}) {		
 		if ($config{antigm_reaction} == 2) {
 			warning "[AntiGM] ".$msg->{args}{bot_name}." me avisou que há GMs online.\n";
-			GMreaction('Avisado através do Bus pelo o bot'. $msg->{args}{bot_name});
+			GMreaction('Avisado através do Bus pelo o bot '. $msg->{args}{bot_name});
 			return;
 		}
 		if ($config{antigm_reaction} == 1 && $msg->{args}{map_name} eq $field->baseName()) {
 			warning "[AntiGM] ".$msg->{args}{bot_name}." me avisou que há GMs nesse mapa.\n";
-			GMreaction('Avisado através do Bus pelo o bot'. $msg->{args}{bot_name});
+			GMreaction('Avisado através do Bus pelo o bot '. $msg->{args}{bot_name});
 			return;
 		} 
 		warning "[AntiGM] ".$msg->{args}{bot_name}." avistou um GM em ". $msg->{args}{map_name} ." no servidor ". $msg->{args}{server} ."\n";
@@ -116,14 +116,7 @@ sub handleBusMessage {
 
 sub GMfound {
 	my $reason = shift;
-	open(FH,'>>:utf8',$Settings::logs_folder.'/antigm_log.txt');
-	print FH "================================================================\n";
-	print FH "Conta: ". $config{username} ."\n";
-	print FH "Personagem: ". $char->{name} ."\n";
-	print FH "Mapa: ". $field->baseName() ."\t\tData: ". timeFormat() ."\n";
-	print FH "Motivo: ". $reason ." chat\n";
-	close(FH);
-	
+
 	# Warn other bots through the bus system
 	if ($config{'antigm_warning'}) {
 		if (!$bus) {
@@ -150,10 +143,20 @@ sub GMfound {
 		}
 	}
 	
-	GMreaction();	
+	GMreaction($reason);	
 }
 
 sub GMreaction {
+	my $reason = shift;
+	
+	open(FH,'>>:utf8',$Settings::logs_folder.'/antigm_log.txt');
+	print FH "================================================================\n";
+	print FH "Conta: ". $config{username} ."\n";
+	print FH "Personagem: ". $char->{name} ."\n";
+	print FH "Mapa: ". $field->baseName() ."\t\tData: ". timeFormat() ."\n";
+	print FH "Motivo: ". $reason ."\n";
+	close(FH);
+	
 	if ($config{antigm_relog} > 0) {
 		relog($config{antigm_relog});
 	} else {
