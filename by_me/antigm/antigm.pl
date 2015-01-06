@@ -75,9 +75,9 @@ sub onUnload {
 sub handleSystemChat {
 	my $message = $_[1]->{message};
 	my $name = $char->{name};
-	if ($message =~ /$name/) {
+	if (index($message,$name) != -1) {
 		warning "[AntiGM] Situação suspeita encontrada.\n";
-		GMfound('Meu nome apareceu na mensagem do sistema');
+		GMfound('Meu nome apareceu na mensagem do sistema',$message);
 	}
 }
 
@@ -85,15 +85,16 @@ sub handlePublicChat {
 	my $message = $_[1]->{message};
 	if ($message =~ /^(\[GM\]|\[GE\]|\[LU\])/) {
 		warning "[AntiGM] Situação suspeita encontrada.\n";
-		GMfound('O GM disse alguma coisa no chat publico');
+		GMfound('O GM disse alguma coisa no chat publico',$message);
 	}
 }
 
 sub handlePrivateMessage {
 	my $nick = $_[1]->{privMsgUser};
+	my $message = $_[1]->{privMsg};
 	if ($nick =~ /^(\[GM\]|\[GE\]|\[LU\])/) {
 		warning "[AntiGM] Situação suspeita encontrada.\n";
-		GMfound('O GM me mandou uma PM');
+		GMfound('O GM me mandou uma PM',$nick.": ".$message);
 	}
 }
 
@@ -115,7 +116,7 @@ sub handleBusMessage {
 }
 
 sub GMfound {
-	my $reason = shift;
+	my ($reason,$log) = @_;
 
 	# Warn other bots through the bus system
 	if ($config{'antigm_warning'}) {
@@ -143,11 +144,11 @@ sub GMfound {
 		}
 	}
 	
-	GMreaction($reason);	
+	GMreaction($reason,$log);	
 }
 
 sub GMreaction {
-	my $reason = shift;
+	my ($reason,$log) = @_;
 	
 	open(FH,'>>:utf8',$Settings::logs_folder.'/antigm_log.txt');
 	print FH "================================================================\n";
@@ -155,6 +156,7 @@ sub GMreaction {
 	print FH "Personagem: ". $char->{name} ."\n";
 	print FH "Mapa: ". $field->baseName() ."\t\tData: ". timeFormat() ."\n";
 	print FH "Motivo: ". $reason ."\n";
+	print FH "Mensagem que disparou a ação: ". $log ."\n" if (defined($log) && $log ne "");
 	close(FH);
 	
 	if ($config{antigm_relog} > 0) {
