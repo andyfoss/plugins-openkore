@@ -45,6 +45,9 @@ use Globals qw($char $bus $field %config @servers);
 use Misc qw(relog quit);
 use Utils::Win32;
 
+# GM name pattern (this is not related to Openkore's built-in pattern)
+my $gm_pattern = '^(\[GM\]|\[GE\]|\[LU\])';
+
 Plugins::register('AntiGM','driblar os GMs do jogo',\&onUnload);
 
 my $hooks = Plugins::addHooks(
@@ -83,7 +86,7 @@ sub handleSystemChat {
 
 sub handlePublicChat {
 	my $message = $_[1]->{message};
-	if ($message =~ /^(\[GM\]|\[GE\]|\[LU\])/) {
+	if ($message =~ /$gm_pattern/) {
 		warning "[AntiGM] Situação suspeita encontrada.\n";
 		GMfound('O GM disse alguma coisa no chat publico',$message);
 	}
@@ -92,7 +95,7 @@ sub handlePublicChat {
 sub handlePrivateMessage {
 	my $nick = $_[1]->{privMsgUser};
 	my $message = $_[1]->{privMsg};
-	if ($nick =~ /^(\[GM\]|\[GE\]|\[LU\])/) {
+	if ($nick =~ /$gm_pattern/) {
 		warning "[AntiGM] Situação suspeita encontrada.\n";
 		GMfound('O GM me mandou uma PM',$nick.": ".$message);
 	}
