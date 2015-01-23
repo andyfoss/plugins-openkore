@@ -165,6 +165,7 @@ sub GMreaction {
 	if ($config{antigm_relog} > 0) {
 		relog($config{antigm_relog});
 	} else {
+		relog();
 		quit();
 	}
 }
