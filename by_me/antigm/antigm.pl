@@ -109,7 +109,7 @@ sub handleStripEvent {
 		my $status = defined $statusHandle{$type} ? $statusHandle{$type} : "UNKNOWN_STATUS_$type";
 		if (
 			$status eq "EFST_NOEQUIPSHIELD" || $status eq "EFST_NOEQUIPARMOR" || $status eq "EFST_NOEQUIPWEAPON" ||
-			$status eq "EFST_NOEQUIPHELM" || $statues eq "EFST_STRIPACCESSARY" 
+			$status eq "EFST_NOEQUIPHELM" || $status eq "EFST_STRIPACCESSARY" 
 		) {
 			warning "[AntiGM] Situação suspeita encontrada.\n";
 			GMfound('O GM removeu meus equipamentos');
