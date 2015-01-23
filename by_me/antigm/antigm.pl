@@ -6,8 +6,8 @@
 #
 # This is a plugin to avoid some common GM tests on the bRO server.
 # Sometimes the GM will talk to you through the system chat, sometimes through PMs
-# and sometimes he'll just speak through the public chat.
-# It identifies the GM and disconnects if he is talking to you.
+# and sometimes he'll just speak through the public chat. Amongst other tests.
+# It identifies the GM and disconnects if he is talking to/testing you.
 #
 # * On the system chat it checks for your name on the message (as it happens on tests)
 #
@@ -41,7 +41,7 @@ use strict;
 use warnings;
 use encoding "utf8";
 use Log qw(warning message error);
-use Globals qw($char $bus $field %config @servers);
+use Globals qw($char $bus $field %config @servers %statusHandle);
 use Misc qw(relog quit);
 use Utils::Win32;
 
@@ -54,7 +54,8 @@ my $hooks = Plugins::addHooks(
 	['packet/system_chat',\&handleSystemChat],
 	['packet/public_chat',\&handlePublicChat],
 	['packet/private_message',\&handlePrivateMessage],
-	['initialized',\&setCallback]
+	['packet/actor_status_active',\&handleStripEvent],
+	['initialized',\&setCallback],
 );
 
 my $debug_cmd = Commands::register(['antigm_emular','emula o avistamento de um GM',\&GMfound]);
@@ -98,6 +99,21 @@ sub handlePrivateMessage {
 	if ($nick =~ /$gm_pattern/) {
 		warning "[AntiGM] Situação suspeita encontrada.\n";
 		GMfound('O GM me mandou uma PM',$nick.": ".$message);
+	}
+}
+
+sub handleStripEvent {
+	my $args = $_[1];
+	if (defined($args->{actor}) && $args->{actor}->isa('Actor::You')) {
+		my $type = $args->{type};
+		my $status = defined $statusHandle{$type} ? $statusHandle{$type} : "UNKNOWN_STATUS_$type";
+		if (
+			$status eq "EFST_NOEQUIPSHIELD" || $status eq "EFST_NOEQUIPARMOR" ||
+			$status eq "EFST_NOEQUIPHELM" || $statues eq "EFST_STRIPACCESSARY"
+		) {
+			warning "[AntiGM] Situação suspeita encontrada.\n";
+			GMfound('O GM removeu meus equipamentos');
+		}
 	}
 }
 
@@ -165,7 +181,6 @@ sub GMreaction {
 	if ($config{antigm_relog} > 0) {
 		relog($config{antigm_relog});
 	} else {
-		relog();
 		quit();
 	}
 }
