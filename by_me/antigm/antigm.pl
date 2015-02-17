@@ -47,6 +47,8 @@ use Utils::Win32;
 
 # GM name pattern (this is not related to Openkore's built-in pattern)
 my $gm_pattern = '^(\[GM\]|\[GE\]|\[LU\])';
+my $plugin_folder = $Plugins::current_plugin_folder;
+my $plugin_audio = "antigm.wav";
 
 Plugins::register('AntiGM','driblar os GMs do jogo',\&onUnload);
 
@@ -154,8 +156,8 @@ sub GMfound {
 	
 	if ($config{antigm_alarm}) {
 		my $filepath;
-		$filepath = "plugins/antigm.wav" if (-e "plugins/antigm.wav");
-		$filepath = "plugins/antigm/antigm.wav" if (-e "plugins/antigm/antigm.wav");
+		$filepath = "plugins/antigm/antigm.wav" if (-e "plugins/". $plugin_audio);
+		$filepath = "plugins/antigm.wav" if (-e $plugin_folder."/". $plugin_audio);
 		if ($filepath) {
 			Utils::Win32::playSound($filepath);
 		} else {
