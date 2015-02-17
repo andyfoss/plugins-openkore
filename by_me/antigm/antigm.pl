@@ -156,8 +156,8 @@ sub GMfound {
 	
 	if ($config{antigm_alarm}) {
 		my $filepath;
-		$filepath = "plugins/antigm/antigm.wav" if (-e "plugins/". $plugin_audio);
-		$filepath = "plugins/antigm.wav" if (-e $plugin_folder."/". $plugin_audio);
+		$filepath = "plugins/". $plugin_audio if (-e "plugins/". $plugin_audio);
+		$filepath = $plugin_folder."/". $plugin_audio if (-e $plugin_folder."/". $plugin_audio);
 		if ($filepath) {
 			Utils::Win32::playSound($filepath);
 		} else {
